@@ -1,13 +1,17 @@
 package algo.data.structures.MazeSolverConsole.MazeStuff;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Stack;
 
 public class Maze {
     public ArrayList<MazeNode> allNodes = new ArrayList<>();
 
     public MazeNode start;
     public MazeNode end;
+
+    private int solCount = 1;
+    public HashMap<Integer, Stack<MazeNode>> solutions = new HashMap<>();
 
     /*
         Parsing is finished for the most part now
@@ -71,6 +75,36 @@ public class Maze {
                     nodeSet.setNodeConnections(connections);
                 }
             }
+        }
+    }
+
+    // Solver for the graph.
+    public void solve(){
+        Stack<MazeNode> visited = new Stack<>();
+        visited.push(start);
+        solutions.put(solCount, new Stack<MazeNode>());
+        solutions.get(solCount).push(start);
+        for(MazeNode subnode : start.getNodeConnections()){
+            solveR(subnode, visited);
+        }
+        if(solutions.get(solCount).empty() || solutions.get(solCount).size() == 1) solutions.remove(solCount);
+    }
+
+    private void solveR(MazeNode node, Stack<MazeNode> visited){
+        visited.push(node);
+        solutions.get(solCount).push(node);
+        for(MazeNode subnode : node.getNodeConnections()){
+            if(!visited.contains(subnode)){
+                solveR(subnode, visited);
+            }
+        }
+        if(node.getName() == end.getName()) {
+            solCount++;
+            solutions.put(solCount, new Stack<MazeNode>());
+        }
+        else {
+            if(!solutions.get(solCount).empty()) solutions.get(solCount).pop();
+            visited.pop();
         }
     }
 
