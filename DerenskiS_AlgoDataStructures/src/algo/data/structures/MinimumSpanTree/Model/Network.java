@@ -1,11 +1,15 @@
 package algo.data.structures.MinimumSpanTree.Model;
 
+
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Network {
 
     public ArrayList<NetNode> allNodes = new ArrayList<>();
+    private ArrayList<Pair<NetNode, NetEdge>> solution = new ArrayList<>();
 
     // TODO I have finished setting up the graph with the weighted edges on the node connections....
 
@@ -53,6 +57,8 @@ public class Network {
     // I will be trying to use Prim's algo for this. Just have to understand how to structure
     // the data to sort and search through...
 
+
+    // Use an Array list of pairs to link nodes and weights.
     public void primSolve(){
         // Sets up the visited node list
         ArrayList<NetNode> visitedNodes = new ArrayList<>();
@@ -75,8 +81,10 @@ public class Network {
             if(!hashKeyNode.getName().equals("null")) {
                 nodeBase.getNodeConnections().get(hashKeyNode).setKeep(true);
                 visitedNodes.add(hashKeyNode);
+                solution.add(new Pair<>(hashKeyNode, nodeBase.getNodeConnections().get(hashKeyNode)));
             }
         }
+        checkVisitedList(visitedNodes);
         // Calculates the length of the path taken by the weights of the connections
         int feetCount = countFeet(visitedNodes);
         System.out.println("Cable Length in Feet: " + feetCount);
@@ -92,5 +100,15 @@ public class Network {
             }
         }
         return countFeet;
+    }
+
+
+    // Have another method to check the visited list to verify that the list is the shortest possible.
+    private void checkVisitedList(ArrayList<NetNode> nodeList) {
+        /*
+            What am I doing wrong to check these.........
+            Sit and think about it a little more....
+         */
+
     }
 }

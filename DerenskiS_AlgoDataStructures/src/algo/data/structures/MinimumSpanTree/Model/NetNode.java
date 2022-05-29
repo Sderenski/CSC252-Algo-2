@@ -11,6 +11,8 @@ public class NetNode {
     // Created an Edge Object for each connection. Store in a hashmap
     private HashMap<NetNode, NetEdge> nodeConnections = new HashMap<>();
 
+    private boolean vistied = false;
+
     public NetNode(String name){
         this.name = name;
     }
@@ -23,5 +25,13 @@ public class NetNode {
 
     public void setNodeConnections(HashMap<NetNode, NetEdge> nodeConnections) {
         this.nodeConnections = nodeConnections;
+    }
+
+    public void setVistied(boolean bool){
+        this.vistied = bool;
+    }
+
+    public boolean getVisited() {
+        return this.vistied;
     }
 }
