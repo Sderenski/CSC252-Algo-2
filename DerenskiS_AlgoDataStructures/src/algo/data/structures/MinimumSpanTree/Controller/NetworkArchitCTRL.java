@@ -13,7 +13,7 @@ public class NetworkArchitCTRL {
 
     public void run(){
         parseHashmap();
-        displayExample();
+        debuggingPaths();
     }
 
     private void parseHashmap() {
@@ -32,6 +32,25 @@ public class NetworkArchitCTRL {
                 System.out.print(node.getNodeConnections().get(key).getWeight());
             }
             System.out.println();
+        }
+    }
+
+
+    private void debuggingPaths() {
+        System.out.println("Debugging the Node Paths");
+        for(NetNode node : network.allNodes){
+            System.out.println("\n" + node.getName());
+            for(var key : node.getNodeConnections().keySet()){
+                if(node.getNodeConnections().get(key).getKeep()) {
+                    System.out.println(key.getName() + ": Set True");
+                }
+            }
+
+        }
+
+        System.out.println("\n\nVisited Nodes");
+        for(NetNode visited : network.visitedNodes){
+            System.out.print(visited.getName() + ", ");
         }
     }
 }

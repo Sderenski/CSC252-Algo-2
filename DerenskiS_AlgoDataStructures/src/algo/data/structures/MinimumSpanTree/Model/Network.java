@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class Network {
 
     public ArrayList<NetNode> allNodes = new ArrayList<>();
-    private ArrayList<Pair<NetNode, NetEdge>> solution = new ArrayList<>();
+    public ArrayList<NetNode> visitedNodes = new ArrayList<>();
 
     // TODO I have finished setting up the graph with the weighted edges on the node connections....
 
@@ -60,31 +60,31 @@ public class Network {
 
     // Use an Array list of pairs to link nodes and weights.
     public void primSolve(){
-        // Sets up the visited node list
-        ArrayList<NetNode> visitedNodes = new ArrayList<>();
+        visitedNodes.clear();
+
         //Loops through all the nodes in the graph
         for(NetNode nodeBase : allNodes){
-            // If the visited node list doesn't have it in it.
-            if(!visitedNodes.contains(nodeBase)) visitedNodes.add(nodeBase);
             // Creates a temp node for to hold the value
             NetNode hashKeyNode = new NetNode("null");
             // Loops through and compares to add the values
             for(NetNode nodeCon : nodeBase.getNodeConnections().keySet()){
                 if(!visitedNodes.contains(nodeCon)){
+                    // How will the logic work in this section? It will have to go through each and then figure out... wait
+                    // What if they do what it is normally then do the check before leaving the node. IF true, leaves the value,
+                    // if false dumps it.....
                     if(hashKeyNode.getName().equals("null")) hashKeyNode = nodeCon;
+                    // Maybe call the loop system again as you are checking them.....
                     else if(nodeBase.getNodeConnections().get(nodeCon).getWeight() < nodeBase.getNodeConnections().get(hashKeyNode).getWeight()){
                         hashKeyNode = nodeCon;
                     }
+//                    if(checkVisitedList(hashKeyNode)){
+//                        hashKeyNode = null;
+//                    }
                 }
             }
             // Makes sure that it found a node to add
-            if(!hashKeyNode.getName().equals("null")) {
-                nodeBase.getNodeConnections().get(hashKeyNode).setKeep(true);
-                visitedNodes.add(hashKeyNode);
-                solution.add(new Pair<>(hashKeyNode, nodeBase.getNodeConnections().get(hashKeyNode)));
-            }
+            addingFunction(hashKeyNode, nodeBase);
         }
-        checkVisitedList(visitedNodes);
         // Calculates the length of the path taken by the weights of the connections
         int feetCount = countFeet(visitedNodes);
         System.out.println("Cable Length in Feet: " + feetCount);
@@ -102,13 +102,38 @@ public class Network {
         return countFeet;
     }
 
+    private void addingFunction(NetNode hashKeyNode, NetNode nodeBase){
+        if(!hashKeyNode.getName().equals("null")) {
+            nodeBase.getNodeConnections().get(hashKeyNode).setKeep(true);
+            visitedNodes.add(hashKeyNode);
+        }
+    }
 
     // Have another method to check the visited list to verify that the list is the shortest possible.
-    private void checkVisitedList(ArrayList<NetNode> nodeList) {
+    // There is an issue with how I am handling the checking of the node....
+    private boolean checkVisitedList(NetNode nodeConCompare) {
         /*
             What am I doing wrong to check these.........
             Sit and think about it a little more....
          */
+        boolean result = false;
+        for(NetNode nodeBase : allNodes){
+            NetNode hashKeyNode = new NetNode("null");
+            // Loops through and compares to add the values
+            for(NetNode nodeCon : nodeBase.getNodeConnections().keySet()){
+                // Maybe call the loop system again as you are checking them.....
+                // How do we work this logic? Do we add all the checks or no
+                if(nodeCon.getName().equals(nodeConCompare.getName())) {
+                    if (nodeBase.getNodeConnections().get(nodeCon).getWeight() < nodeBase.getNodeConnections().get(nodeConCompare).getWeight()) {
+                        hashKeyNode = nodeCon;
+                        result = true;
+                    }
+                }
+            }
+            // Adding the Shorter path...
+            if(result) addingFunction(hashKeyNode, nodeBase);
+        }
 
+        return result;
     }
 }

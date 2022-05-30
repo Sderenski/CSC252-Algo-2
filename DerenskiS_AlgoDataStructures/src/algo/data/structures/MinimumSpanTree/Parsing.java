@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Parsing {
-    private static String fileString = "C:\\Users\\sderenski\\Documents\\Neumont\\2022 Spring\\CSC252 - Algo 2\\DerenskiS_AlgoDataStructures\\src\\algo\\data\\structures\\MinimumSpanTree\\Resources\\NetworkInputTestB.txt";
+    private static String fileString;
     private static BufferedReader input = null;
     private static Scanner scanner = new Scanner(System.in);
 
@@ -22,7 +22,7 @@ public class Parsing {
         boolean quit = false;
         while(!quit){
             try{
-                //fileString = getString("Enter in File Path: ");
+                fileString = getString("Enter in File Path: ");
                 input = new BufferedReader(new FileReader(fileString));
                 String line = input.readLine();
                 while(line != null){
