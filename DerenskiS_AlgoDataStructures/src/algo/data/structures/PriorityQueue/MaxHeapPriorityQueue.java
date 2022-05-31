@@ -1,5 +1,7 @@
 package algo.data.structures.PriorityQueue;
 
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 
 public class MaxHeapPriorityQueue<T extends Comparable<? super T>>{
@@ -22,35 +24,32 @@ public class MaxHeapPriorityQueue<T extends Comparable<? super T>>{
             3.) Continue comparing the new element with nodes up the tree until the heap condition is satisfied
      */
 
+    // Issue, there a 20 wasn't added to the top of the list....
+    // Let's try this recursively...
     public void add(T value){
         heapList.add(value);
-        resortAdd();
+
+        Comparable[] addedArr = toArray();
+
+        resortAddV2(addedArr, addedArr.length-1);
+
+        heapList.clear();
+        for (var obj : addedArr) heapList.add((T) obj);
     }
 
-    private void resortAdd(){
-        // Fuck it lets try and do it iterately
-        // Add a break point to stop to check the root....
-        Comparable[] list = toArray();
-        for(int i = heapList.size() - 1; i > -1; i--){
-            System.out.println("i: " + i);
-            System.out.println("Modulo i % 2: " + ( i % 2));
-            if(i > 3) {
-                if (i % 2 == 0) {
-                    int j = i / 2;
-                    if (heapList.get(i).compareTo(heapList.get(j)) > 0) {
-                        swapLogic(list, i, j);
-                    }
-                } else {
-                    int j = (i / 2) - 1;
-                    if (heapList.get(i).compareTo(heapList.get(j)) > 0) {
-                        swapLogic(list, i, j);
-                    }
-                }
+    private void resortAddV2(Comparable[] arr, int root) {
+        // In here we are going to think of this like the remove method...
+        // Math Operators
+        int i = root + 1;
+        int j = (i / 2) - 1;
+
+        // Conditionals
+        if(j >= 0){
+            if(arr[root].compareTo(arr[j]) > 0){
+                swapLogic(arr, root, j);
+                resortAddV2(arr, j);
             }
         }
-        sizeSmall(list);
-        heapList.clear();
-        for (var obj : list) heapList.add((T) obj);
     }
 
     // Might break this up? Maybe not depending on what happens with the rest of this....
@@ -60,15 +59,15 @@ public class MaxHeapPriorityQueue<T extends Comparable<? super T>>{
         list[i] = tempValue;
     }
 
-    private void sizeSmall(Comparable[] list){
-        if(heapList.size() > 2) {
-            if(heapList.get(2).compareTo(heapList.get(1)) > 0 && heapList.get(2).compareTo(heapList.get(0)) > 0) swapLogic(list, 2, 0);
-            else if (heapList.get(1).compareTo(heapList.get(2)) < 0 && heapList.get(1).compareTo(heapList.get(0)) > 0) swapLogic(list, 1, 0);
-        }
-        if (heapList.size() > 1) {
-            if (heapList.get(1).compareTo(heapList.get(0)) > 0) swapLogic(list, 1, 0);
-        }
-    }
+//    private void sizeSmall(Comparable[] list){
+//        if(heapList.size() > 2) {
+//            if(heapList.get(2).compareTo(heapList.get(1)) > 0 && heapList.get(2).compareTo(heapList.get(0)) > 0) swapLogic(list, 2, 0);
+//            else if (heapList.get(1).compareTo(heapList.get(2)) < 0 && heapList.get(1).compareTo(heapList.get(0)) > 0) swapLogic(list, 1, 0);
+//        }
+//        if (heapList.size() > 1) {
+//            if (heapList.get(1).compareTo(heapList.get(0)) > 0) swapLogic(list, 1, 0);
+//        }
+//    }
 
     public T peek() {
         return heapList.get(0);
@@ -76,12 +75,54 @@ public class MaxHeapPriorityQueue<T extends Comparable<? super T>>{
 
 
     // TODO Implement the remove functions for the class object......
+    // Return the removed node
     public void remove() {
+        // Swap the first and last nodes first and reduce the size of the array
+        // Have to turn it into an array list first then go from there
+        Comparable[] initArr = toArray();
+        swapLogic(initArr, 0, (initArr.length-1));
 
+        // Next Step:
+        // remove the last element in the list
+        Comparable removedNode = initArr[initArr.length-1];
+        heapList.clear();
+        for (var obj : initArr) heapList.add((T) obj);
+
+        heapList.remove(heapList.size()-1);
+        Comparable[] reducedArr = toArray();
+
+        // Time to shuffle the nodes around....
+        // This will be recursive to go where the root node is
+        resortRm(reducedArr, 0);
+        heapList.clear();
+        for (var obj : reducedArr) heapList.add((T) obj);
     }
 
-    private void resortRm() {
+    private void resortRm(Comparable[] arr, int root) {
+        // Math Comparing/Operations
+        int i = root + 1;
+        int jL = (2 * i) - 1;
+        int jR = (2 * i);
 
+        // Starts at the root
+        // Grab both of the nodes if they EXIST
+        // Then compare them together, finally to the root node.
+        // Swap from there.
+        if(jR < arr.length){
+            if(arr[jR].compareTo(arr[jL]) > 0 && arr[jR].compareTo(arr[root]) > 0){
+                swapLogic(arr, root, jR);
+                resortRm(arr, jR);
+            } else if(arr[jL].compareTo(arr[jR]) > 0 && arr[jL].compareTo(arr[root]) > 0){
+                swapLogic(arr, root, jL);
+                resortRm(arr, jL);
+            }
+        } else if (jL < arr.length) {
+            if(arr[jL].compareTo(arr[root]) > 0) {
+                swapLogic(arr, root, jL);
+            }
+        } else {
+            return;
+        }
     }
 
     public int count() {
