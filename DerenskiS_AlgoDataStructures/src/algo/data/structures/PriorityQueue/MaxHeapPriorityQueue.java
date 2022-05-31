@@ -59,24 +59,13 @@ public class MaxHeapPriorityQueue<T extends Comparable<? super T>>{
         list[i] = tempValue;
     }
 
-//    private void sizeSmall(Comparable[] list){
-//        if(heapList.size() > 2) {
-//            if(heapList.get(2).compareTo(heapList.get(1)) > 0 && heapList.get(2).compareTo(heapList.get(0)) > 0) swapLogic(list, 2, 0);
-//            else if (heapList.get(1).compareTo(heapList.get(2)) < 0 && heapList.get(1).compareTo(heapList.get(0)) > 0) swapLogic(list, 1, 0);
-//        }
-//        if (heapList.size() > 1) {
-//            if (heapList.get(1).compareTo(heapList.get(0)) > 0) swapLogic(list, 1, 0);
-//        }
-//    }
-
     public T peek() {
         return heapList.get(0);
     }
 
 
-    // TODO Implement the remove functions for the class object......
     // Return the removed node
-    public void remove() {
+    public T remove() {
         // Swap the first and last nodes first and reduce the size of the array
         // Have to turn it into an array list first then go from there
         Comparable[] initArr = toArray();
@@ -96,6 +85,8 @@ public class MaxHeapPriorityQueue<T extends Comparable<? super T>>{
         resortRm(reducedArr, 0);
         heapList.clear();
         for (var obj : reducedArr) heapList.add((T) obj);
+
+        return (T) removedNode;
     }
 
     private void resortRm(Comparable[] arr, int root) {
